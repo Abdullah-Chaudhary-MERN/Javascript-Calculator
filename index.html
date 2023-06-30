@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculator</title>
+  <style>
+    body {
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAFklEQVQImWMwMjJKYyAKGBkZGWOVAABS4gHGVw9s1gAAAABJRU5ErkJggg==) repeat;
+      padding-bottom: 60px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 300;
+    }
+  
+    footer {
+      position: fixed;
+      box-sizing: content-box;
+      bottom: 0px;
+      width: 100%;
+      height: 20px;
+      padding: 10px;
+      box-shadow: -1px 0 6px #eee;
+    }
+  
+    a {
+      color: #ffab40;
+    }
+  
+    .space {
+      height: 100px;
+    }
+  
+    main.calc {
+      position: relative;
+      width: 320px;
+      height: 400px;
+      margin: 0 auto;
+    }
+  
+    .screen {
+      height: 80px;
+      width: 100%;
+      padding: 15px 9px;
+      font-size: 2.5em;
+      text-align: right;
+      box-shadow: inset 0 -1px 3px 1px #111;
+    }
+  
+    .buttons > button {
+      float: left;
+      height: 64px;
+      border: 1px solid #111;
+      font-size: 1.5em;
+    }
+  
+    .btn1 {
+      width: 80px;
+    }
+  
+    .btn2 {
+      width: 160px;
+    }
+  
+    .clear-float {
+      clear: both;
+    }
+  </style>
+</head>
+<body class="blue lighten-5">
+  <div class="hide-on-small-only space"></div>
+  <main class="blue lighten-3 calc">
+    <div class="screen blue-grey darken-3 white-text">0</div>
+    <div class="buttons">
+      <button type="button" class="waves-effect waves-light blue-grey lighten-3 btn1">AC</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-3 btn1">+/-</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-3 btn1">%</button>
+      <button type="button" class="waves-effect waves-light blue accent-1 btn1">&divide;</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">1</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">2</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">3</button>
+      <button type="button" class="waves-effect waves-light blue accent-1 btn1">x</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">4</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">5</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">6</button>
+      <button type="button" class="waves-effect waves-light blue accent-1 btn1">-</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">7</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">8</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1">9</button>
+      <button type="button" class="waves-effect waves-light blue accent-1 btn1">+</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn2">0</button>
+      <button type="button" class="waves-effect waves-light blue-grey lighten-4 btn1"><strong>.</strong></button>
+      <button type="button" class="waves-effect waves-light blue accent-1 btn1">=</button>
+      <div class="clear-float"></div>
+    </div>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+
+      var res = 0;
+      var op = "";
+      var disp = true;
+      var scr = $('.screen');
+
+      $('main').on('click','button',function(){
+        let input = $(this).text();
+        let scrtxt = $('.screen').text();
+        switch(input){
+          case "AC":
+            res = 0;
+            op = "";
+            disp = true;
+            scr.text("0");
+            break;
+          case "C":
+            scr.text("0");
+            disp = true;
+            $(".buttons > button:first-child").text("AC");
+            break;
+          case "+/-":
+            scr.text(-parseFloat(scrtxt,10) + "");
+            break;
+          case "%":
+            scr.text(parseFloat(scrtxt,10)/100 + "");
+            disp = true;
+            break;
+          case "+":
+            updateResult(parseFloat(scrtxt),"+");
+            break;
+          case "-":
+            updateResult(parseFloat(scrtxt),"-");
+            break;
+          case "x":
+            updateResult(parseFloat(scrtxt),"*");
+            break;
+          case "\u00f7":
+            updateResult(parseFloat(scrtxt),"/");
+            break;
+          case "=":
+            updateResult(parseFloat(scrtxt),"=");
+            break;
+          default:
+            if(scrtxt.length >= 15) break; //improve later
+            if(disp) {
+              scr.text(input);
+              disp = false;
+            }
+            else scr.text(scrtxt + input);
+            $(".buttons > button:first-child").text("C");
+        }
+      });
+
+      function updateResult(num, opr) {
+        disp = true;
+        switch(op) {
+          case "+":
+            res += num;
+            break;
+          case "-":
+            res -= num;
+            break;
+          case "/":
+            res /= num;
+            break;
+          case "*":
+            res *= num;
+            break;
+          default:
+            res = num == 0 ? res : num;
+        }
+        op = opr == "=" ? "" : opr;
+        let scrtxt = res + "";
+        scr.text(scrtxt.length > 15 ? scrtxt.substr(0,15) : scrtxt);
+      }
+
+      $('.modal-trigger').click(function() {
+        $('#credits').modal();
+      });
+
+    });
+  </script>
+</body>
+</html>
